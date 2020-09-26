@@ -21,9 +21,9 @@ class Passenger(models.Model):
 
 
 class Reservation(models.Model):
-    flight = models.OneToOneField(Flight, on_delete=models.CASCADE)
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     """
-    This says that if any flight is deleted then all its reservation
-    should also be deleted
+    one flight is part of many reservations
+    hence the relationship between  reservation and flight is many to one
     """
     passenger = models.OneToOneField(Passenger, on_delete=models.CASCADE)

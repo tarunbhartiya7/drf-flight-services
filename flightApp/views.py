@@ -1,8 +1,9 @@
 from .models import Flight, Reservation, Passenger
 from .serializers import FlightSerializer, PassengerSerializer, ReservationSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
 
 # Create your views here.
 
@@ -35,3 +36,25 @@ def find_flights(request):
         departureCity=request.data['departureCity'], arrivalCity=request.data['arrivalCity'], dateOfDeparture=request.data['dateOfDeparture'])
     serializer = FlightSerializer(flights, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def save_reservation(request):
+    # retrieving the flight from database
+    flight = Flight.objects.get(id=request.data['id'])
+
+    passenger = Passenger()
+    passenger.firstName = request.data['firstName']
+    passenger.lastName = request.data['lastName']
+    passenger.middleName = request.data['middleName']
+    passenger.email = request.data['email']
+    passenger.phone = request.data['phone']
+    passenger.save()
+
+    reservation = Reservation()
+    reservation.flight = flight
+    reservation.passenger = passenger
+
+    reservation.save()
+
+    return Response(status=status.HTTP_201_CREATED)
